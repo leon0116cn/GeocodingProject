@@ -1,21 +1,18 @@
 import requests
+import sys
 
-
-GOOGLE_KEY = 'AIzaSyC_fPG4fhLPLR5p9SdZK51xSez1M0DtEIs'
-GOOGLE_GEOCODING_URL = 'https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'
-
-
-class MerchantLocation:
+class MerchantLocation(object):
 
     def __init__(self, mid, address):
-        self.mid = mid
-        self.address = address
+        self._mid = mid
+        self._address = address
 
     def __str__(self):
-        return "Mid:{0} address:{1} formatted_address:{2} lat:{3} lng:{4}".format(self.mid, self.address, self.formatted_address, self.lat, self.lng)
+        return "Mid:{0} address:{1} formatted_address:{2} lat:{3} lng:{4}".format(self._mid, self._address, self._formatted_address, self._lat, self._lng)
 
-    def geocoding(self):
-        request_url = GOOGLE_GEOCODING_URL.format(self.address, GOOGLE_KEY)
+    def geocoding(self, goomap_key):
+        geocoding_urltemp = 'https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'
+        request_url = geocoding_urltemp.format(self.address, goomap_key)
         print("Google geocoding request is:{0}".format(request_url))
         respons = requests.get(request_url)
         if respons.status_code != 200:
@@ -38,28 +35,31 @@ class MerchantLocation:
         return self
 
     def get_mid(self):
-        return self.mid
+        return self._mid
 
     def get_address(self):
-        return self.address
+        return self._address
 
     def get_formatted_address(self):
-        return self.formatted_address
+        return self._formatted_address
 
     def get_lat(self):
-        return self.lat
+        return self._lat
 
     def get_lng(self):
-        return self.lng
+        return self._lng
 
 
 def main():
-    with open("output.dat", "w", encoding="utf-8") as output_data:
-        with open("input.dat", encoding="utf-8") as input_data:
+    input_file_path = sys.argv[1]
+    output_file_path = sys.argv[2]
+    google_key = sys.argv[3]
+    with open(output_file_path, "w", encoding="utf-8") as output_data:
+        with open(input_file_path, encoding="utf-8") as input_data:
             for input_line in input_data.readlines():
                 input_list = input_line.strip().split("\t")
                 merchantLocation = MerchantLocation(input_list[0], input_list[1])
-                if merchantLocation.geocoding():
+                if merchantLocation.geocoding(google_key):
                     outputStr = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(merchantLocation.get_mid(), merchantLocation.get_address(), merchantLocation.get_formatted_address(), merchantLocation.get_lat(), merchantLocation.get_lng())
                     print(outputStr)
                     output_data.write(outputStr)
