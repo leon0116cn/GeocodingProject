@@ -1,52 +1,59 @@
 import requests
 import sys
 
-class MerchantLocation(object):
+
+class MerchantLocation:
 
     def __init__(self, mid, address):
         self._mid = mid
         self._address = address
+        self._formatted_address = None
+        self._lat = None
+        self._lng = None
 
     def __str__(self):
         return "Mid:{0} address:{1} formatted_address:{2} lat:{3} lng:{4}".format(self._mid, self._address, self._formatted_address, self._lat, self._lng)
 
-    def geocoding(self, goomap_key):
-        geocoding_urltemp = 'https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'
-        request_url = geocoding_urltemp.format(self.address, goomap_key)
-        print("Google geocoding request is:{0}".format(request_url))
-        respons = requests.get(request_url)
-        if respons.status_code != 200:
-            print("Google geocoding response is ERROR! Response status code is", respons.status_code)
-            return
-        respons_data = respons.json()
-        if respons_data and respons_data['status'] == 'OK':
-            results = respons_data['results'][0]
+    def __repr__(self):
+        return self.__str__()
+
+    def geocoding(self, key):
+        url = 'https://maps.googleapis.com/maps/api/geocode/json'
+        payload = {'address': self._address, 'key': key}
+        resp = requests.get(url, params=payload)
+        if resp.status_code != requests.codes.ok:
+            print("Google response is ERROR! Response status code is", resp.status_code)
+            return self
+        data = resp.json()
+        if data and data['status'] == 'OK':
+            results = data['results'][0]
             if "formatted_address" in results:
-                self.formatted_address = results['formatted_address']
+                self._formatted_address = results['formatted_address']
             if "geometry" in results:
-                self.lat = results['geometry']['location']['lat']
-                self.lng = results['geometry']['location']['lng']
-            print("Google geocoding response json is proccessed WELL!")
+                self._lat = results['geometry']['location']['lat']
+                self._lng = results['geometry']['location']['lng']
         else:
-            print("Google geocoding response json is proccessed ERROR!")
-            self.formatted_address = ""
-            self.lat = ""
-            self.lng = ""
+            print("Google response is ERROR! Response status code is", data['status'])
         return self
 
-    def get_mid(self):
+    @property
+    def mid(self):
         return self._mid
 
-    def get_address(self):
+    @property
+    def address(self):
         return self._address
 
-    def get_formatted_address(self):
+    @property
+    def formatted_address(self):
         return self._formatted_address
 
-    def get_lat(self):
+    @property
+    def lat(self):
         return self._lat
 
-    def get_lng(self):
+    @property
+    def lng(self):
         return self._lng
 
 
@@ -58,17 +65,12 @@ def main():
         with open(input_file_path, encoding="utf-8") as input_data:
             for input_line in input_data.readlines():
                 input_list = input_line.strip().split("\t")
-                merchantLocation = MerchantLocation(input_list[0], input_list[1])
-                if merchantLocation.geocoding(google_key):
-                    outputStr = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(merchantLocation.get_mid(), merchantLocation.get_address(), merchantLocation.get_formatted_address(), merchantLocation.get_lat(), merchantLocation.get_lng())
+                merc_loca = MerchantLocation(input_list[0], input_list[1])
+                if merc_loca.geocoding(google_key):
+                    outputStr = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(merc_loca.mid, merc_loca.address, merc_loca.formatted_address, merc_loca.lat, merc_loca.lat)
                     print(outputStr)
                     output_data.write(outputStr)
 
 
 if(__name__ == '__main__'):
     main()
-
-
-
-
-
