@@ -71,7 +71,7 @@ def main():
     with open(sys.argv[2], "w", encoding="utf-8") as output_data:
         for mid, address in load_input_file(sys.argv[1]):
             ml = MerchantLocation(mid, address)
-            if merc_loca.geocoding(sys.argv[3]):
+            if ml.geocoding(sys.argv[3]):
                 outputStr = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(ml.mid, ml.address, ml.formatted_address, ml.lat, ml.lat)
                 print(outputStr)
                 output_data.write(outputStr)
