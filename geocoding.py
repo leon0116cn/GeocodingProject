@@ -57,7 +57,7 @@ class MerchantLocation:
         return self._lng
 
 
-def load_input_file(file_path):
+def load_input_file(file_path='data/input.txt'):
     try:
         with open(file_path, encoding='utf-8') as lines:
             for line in lines:
