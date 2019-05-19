@@ -22,7 +22,7 @@ class MerchantLocation:
         payload = {'address': self._address, 'key': key}
         resp = requests.get(url, params=payload)
         if resp.status_code != requests.codes.ok:
-            print("Google response is ERROR! Response status code is", resp.status_code)
+            print("ERROR! Response status code: {0} and mid: {1}".format(resp.status_code, self.mid))
             return self
         data = resp.json()
         if data and data['status'] == 'OK':
@@ -33,7 +33,7 @@ class MerchantLocation:
                 self._lat = results['geometry']['location']['lat']
                 self._lng = results['geometry']['location']['lng']
         else:
-            print("Google response is ERROR! Response status code is", data['status'])
+            print("ERROR! Google response status: %s and mid: %s" % (data['status'], self.mid))
         return self
 
     @property
