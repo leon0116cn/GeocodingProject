@@ -57,19 +57,24 @@ class MerchantLocation:
         return self._lng
 
 
+def load_input_file(file_path):
+    try:
+        with open(file_path, encoding='utf-8') as lines:
+            for line in lines:
+                yield str(line).strip().split('\t')
+    except IOError as ex:
+        print('Load input file error!')
+        print(ex)
+
+
 def main():
-    input_file_path = sys.argv[1]
-    output_file_path = sys.argv[2]
-    google_key = sys.argv[3]
-    with open(output_file_path, "w", encoding="utf-8") as output_data:
-        with open(input_file_path, encoding="utf-8") as input_data:
-            for input_line in input_data.readlines():
-                input_list = input_line.strip().split("\t")
-                merc_loca = MerchantLocation(input_list[0], input_list[1])
-                if merc_loca.geocoding(google_key):
-                    outputStr = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(merc_loca.mid, merc_loca.address, merc_loca.formatted_address, merc_loca.lat, merc_loca.lat)
-                    print(outputStr)
-                    output_data.write(outputStr)
+    with open(sys.argv[2], "w", encoding="utf-8") as output_data:
+        for mid, address in load_input_file(sys.argv[1]):
+            merc_loca = MerchantLocation(mid, address)
+            if merc_loca.geocoding(sys.argv[3]):
+                outputStr = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(merc_loca.mid, merc_loca.address, merc_loca.formatted_address, merc_loca.lat, merc_loca.lat)
+                print(outputStr)
+                output_data.write(outputStr)
 
 
 if(__name__ == '__main__'):
