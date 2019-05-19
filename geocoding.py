@@ -70,9 +70,9 @@ def load_input_file(file_path):
 def main():
     with open(sys.argv[2], "w", encoding="utf-8") as output_data:
         for mid, address in load_input_file(sys.argv[1]):
-            merc_loca = MerchantLocation(mid, address)
+            ml = MerchantLocation(mid, address)
             if merc_loca.geocoding(sys.argv[3]):
-                outputStr = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(merc_loca.mid, merc_loca.address, merc_loca.formatted_address, merc_loca.lat, merc_loca.lat)
+                outputStr = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(ml.mid, ml.address, ml.formatted_address, ml.lat, ml.lat)
                 print(outputStr)
                 output_data.write(outputStr)
 
