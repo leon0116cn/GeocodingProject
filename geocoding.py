@@ -1,5 +1,4 @@
 import requests
-import sys
 
 
 class MerchantLocation:
@@ -12,10 +11,10 @@ class MerchantLocation:
         self._lng = None
 
     def __str__(self):
-        return "Mid:{0} address:{1} formatted_address:{2} lat:{3} lng:{4}".format(self._mid, self._address, self._formatted_address, self._lat, self._lng)
-
-    def __repr__(self):
-        return self.__str__()
+        return "Mid:{0} address:{1} formatted_address:{2} lat:{3} lng:{4}".format(self._mid,
+                                                                                  self._address,
+                                                                                  self._formatted_address,
+                                                                                  self._lat, self._lng)
 
     def geocoding(self, key):
         url = 'https://maps.googleapis.com/maps/api/geocode/json'
@@ -68,6 +67,7 @@ def load_input_file(file_path='data/input.txt'):
 
 
 def main():
+    import sys
     with open(sys.argv[2], "w", encoding="utf-8") as output_data:
         for mid, address in load_input_file(sys.argv[1]):
             ml = MerchantLocation(mid, address)
@@ -77,5 +77,5 @@ def main():
                 output_data.write(output_line)
 
 
-if(__name__ == '__main__'):
+if(__name__=='__main__'):
     main()
