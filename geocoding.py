@@ -72,10 +72,11 @@ def main():
         for mid, address in load_input_file(sys.argv[1]):
             ml = MerchantLocation(mid, address)
             if ml.geocoding(sys.argv[3]):
-                output_line = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(ml.mid, ml.address, ml.formatted_address, ml.lat, ml.lat)
+                output_line = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(ml.mid, ml.address,
+                                                                 ml.formatted_address, ml.lat, ml.lat)
                 print(output_line)
                 output_data.write(output_line)
 
 
-if(__name__=='__main__'):
+if __name__ == '__main__':
     main()
